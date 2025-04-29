@@ -1,6 +1,7 @@
 package spentenergy
 
 import (
+	"errors"
 	"time"
 )
 
@@ -13,17 +14,42 @@ const (
 )
 
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// TODO: реализовать функцию
+	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 { //проверка значений на отрицательность
+		err := errors.New("WalkingSpentCalories: <=0")
+		return 0.0, err
+	}
+	maenSp := MeanSpeed(steps, height, duration)                              //средняя скорость
+	durationInMinutes := duration.Minutes()                                   //продолжительность в минутах
+	walkCalories := (weight * maenSp * durationInMinutes) / (float64(minInH)) //количество калорий потраченных при ходьбе
+	walkCalories *= walkingCaloriesCoefficient                                //умножение на корректирующий коэффициент
+	return walkCalories, nil
+
 }
 
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// TODO: реализовать функцию
+	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 { //проверка значений на отрицательность
+		err := errors.New("RunningSpentCalories: <=0")
+		return 0.0, err
+	}
+	maenSp := MeanSpeed(steps, height, duration)                             //средняя скорость
+	durationInMinutes := duration.Minutes()                                  //продолжительность в минутах
+	runCalories := (weight * maenSp * durationInMinutes) / (float64(minInH)) //количество калрий потраченных при беге
+	return runCalories, nil
+
 }
 
 func MeanSpeed(steps int, height float64, duration time.Duration) float64 {
-	// TODO: реализовать функцию
+	if steps <= 0 || duration <= 0 {
+		return 0.0
+	}
+	distance := Distance(steps, height)   //дистанция
+	meanSp := distance / duration.Hours() //средняя скорость
+	return meanSp
+
 }
 
 func Distance(steps int, height float64) float64 {
-	// TODO: реализовать функцию
+	stepLenght := height * stepLengthCoefficient                 //расчет длины шага
+	distance := (stepLenght * (float64(steps))) / float64(mInKm) //расчет дистанции
+	return distance
 }
