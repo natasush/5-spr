@@ -20,27 +20,36 @@ type DaySteps struct {
 func (ds *DaySteps) Parse(datastring string) (err error) {
 	vals := strings.Split(datastring, ",")
 	if len(vals) != 2 { //проверка количества данных
-		return errors.New("Parse: wrong data")
+		return errors.New("wrong data")
 	}
-	ds.Steps, err = strconv.Atoi(vals[0]) //сохр. полученное значение шагов в поле структуры DaySteps
-	if err != nil || ds.Steps <= 0 {      //проверяем корректность преобразования данных о шагах:из строки в int (и положительность знач.)
-		return errors.New("Parse: steps")
+	steps, err := strconv.Atoi(vals[0]) //извлечение данных о шагах из строки
+	if err != nil {                     //проверяем корректность преобразования данных о шагах:из строки в int
+		err = errors.New("parse: steps")
+		return err
 	}
-
-	dur, err := time.ParseDuration(vals[1]) //сохр. продолжительности в поле структуры DaySteps
-	if err != nil || dur <= 0 {             // проверка корректности преобразования данных о времени: из строки в time.Duration (и положительность знач.)
-		return errors.New("Parse: duration")
+	if steps <= 0 {
+		return errors.New("steps<=0")
 	}
-	ds.Duration = dur
-	return nil //если не было ошибок
+	dur, err := time.ParseDuration(vals[1]) //извлечение данных о продолжительности из строки
+	if err != nil {                         // проверка корректности преобразования данных о времени: из строки в time.Duration
+		err = errors.New("parse: duration")
+		return err
+	}
+	if dur <= 0 {
+		return errors.New("duration<=0")
+	}
+	ds.Steps = steps  //сохр. шагов в поле структуры DaySteps
+	ds.Duration = dur //сохр. продолжительности в поле структуры DaySteps
+	return nil        //если не было ошибок
 
 }
 
 func (ds DaySteps) ActionInfo() (string, error) {
 	dist := spentenergy.Distance(ds.Steps, ds.Height)                                          //дистанция
 	ccal, err := spentenergy.WalkingSpentCalories(ds.Steps, ds.Weight, ds.Height, ds.Duration) //количество сожженных калорий
-	if err != nil {                                                                            //в случае ошибки при расчете калорий
-		return "", errors.New("ActionInfo: WalkingSpentCalories")
+	if err != nil {
+		err = errors.New("calories calculation error") //в случае ошибки при расчете калорий
+		return "", err
 	}
 	s := fmt.Sprintf("Количество шагов: %d.\nДистанция составила %.2f км.\nВы сожгли %.2f ккал.\n", ds.Steps, dist, ccal)
 	return s, nil

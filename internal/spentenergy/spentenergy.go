@@ -5,7 +5,6 @@ import (
 	"time"
 )
 
-// Основные константы, необходимые для расчетов.
 const (
 	mInKm                      = 1000 // количество метров в километре.
 	minInH                     = 60   // количество минут в часе.
@@ -15,7 +14,7 @@ const (
 
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
 	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 { //проверка значений на отрицательность
-		err := errors.New("WalkingSpentCalories: <=0")
+		err := errors.New("negative values are not allowed")
 		return 0.0, err
 	}
 	maenSp := MeanSpeed(steps, height, duration)                              //средняя скорость
@@ -28,7 +27,7 @@ func WalkingSpentCalories(steps int, weight, height float64, duration time.Durat
 
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
 	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 { //проверка значений на отрицательность
-		err := errors.New("RunningSpentCalories: <=0")
+		err := errors.New("negative values are not allowed")
 		return 0.0, err
 	}
 	maenSp := MeanSpeed(steps, height, duration)                             //средняя скорость
