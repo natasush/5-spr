@@ -13,8 +13,20 @@ const (
 )
 
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 { //проверка значений на отрицательность
-		err := errors.New("negative values are not allowed")
+	if steps <= 0 {
+		err := errors.New("negative values are not allowed: steps <= 0")
+		return 0.0, err
+	}
+	if weight <= 0 {
+		err := errors.New("negative values are not allowed: weight <= 0")
+		return 0.0, err
+	}
+	if height <= 0 {
+		err := errors.New("negative values are not allowed: height <= 0")
+		return 0.0, err
+	}
+	if duration <= 0 {
+		err := errors.New("negative values are not allowed: duration <= 0")
 		return 0.0, err
 	}
 	maenSp := MeanSpeed(steps, height, duration)                              //средняя скорость
@@ -26,9 +38,17 @@ func WalkingSpentCalories(steps int, weight, height float64, duration time.Durat
 }
 
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 { //проверка значений на отрицательность
-		err := errors.New("negative values are not allowed")
-		return 0.0, err
+	if steps <= 0 {
+		return 0.0, errors.New("negative values are not allowed: steps <= 0")
+	}
+	if weight <= 0 {
+		return 0.0, errors.New("negative values are not allowed: weight <= 0")
+	}
+	if height <= 0 {
+		return 0.0, errors.New("negative values are not allowed: heights <= 0")
+	}
+	if duration <= 0 {
+		return 0.0, errors.New("negative values are not allowed: duration <= 0")
 	}
 	maenSp := MeanSpeed(steps, height, duration)                             //средняя скорость
 	durationInMinutes := duration.Minutes()                                  //продолжительность в минутах
@@ -38,7 +58,7 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 }
 
 func MeanSpeed(steps int, height float64, duration time.Duration) float64 {
-	if steps <= 0 || duration <= 0 {
+	if steps <= 0 || duration <= 0 || height <= 0 {
 		return 0.0
 	}
 	distance := Distance(steps, height)   //дистанция
@@ -48,6 +68,9 @@ func MeanSpeed(steps int, height float64, duration time.Duration) float64 {
 }
 
 func Distance(steps int, height float64) float64 {
+	if steps <= 0 || height <= 0 {
+		return 0.0
+	}
 	stepLenght := height * stepLengthCoefficient                 //расчет длины шага
 	distance := (stepLenght * (float64(steps))) / float64(mInKm) //расчет дистанции
 	return distance
